@@ -32,30 +32,33 @@
 	<div class="form-signin w-100 m-auto">
 		<h1 class="h3 mb-3 fw-normal">Регистрация</h1>
 
-		<div class="form-floating">
-			<input
-				type="text"
-				class={usernameValid ? 'form-control' : 'form-control is-invalid'}
-				id="username"
-				placeholder="username"
-				bind:value={username}
-			/>
-			<label for="username">Имя пользователя</label>
-			<div class="invalid-feedback">Неправильный формат имени пользователя</div>
-		</div>
-		<div class="form-floating mt-2">
-			<input
-				type="password"
-				class={passwordValid ? 'form-control' : 'form-control is-invalid'}
-				id="password"
-				placeholder="password"
-				bind:value={password}
-			/>
-			<label for="password">Пароль</label>
-			<div class="invalid-feedback">Неправильный формат пароля</div>
-		</div>
-
-		<button class="w-100 mt-3 btn btn-lg btn-primary" on:click={submit}>Зарегистрироваться</button>
+		<form>
+			<div class="form-floating">
+				<input
+					type="text"
+					class={usernameValid ? 'form-control' : 'form-control is-invalid'}
+					id="username"
+					placeholder="username"
+					bind:value={username}
+				/>
+				<label for="username">Имя пользователя</label>
+				<div class="invalid-feedback">Неправильный формат имени пользователя</div>
+			</div>
+			<div class="form-floating mt-2">
+				<input
+					type="password"
+					class={passwordValid ? 'form-control' : 'form-control is-invalid'}
+					id="password"
+					placeholder="password"
+					bind:value={password}
+				/>
+				<label for="password">Пароль</label>
+				<div class="invalid-feedback">Неправильный формат пароля</div>
+			</div>
+			<button class="w-100 mt-3 btn btn-lg btn-primary" type="submit" on:click={submit}
+				>Зарегистрироваться</button
+			>
+		</form>
 	</div>
 </div>
 
