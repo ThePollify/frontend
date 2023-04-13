@@ -1,23 +1,15 @@
 <script lang="ts">
+	import { toast } from '@zerodevx/svelte-toast';
 	import { token } from '../../stores';
 	import unauthenticatedOnlyGuard from '../../guards.svelte';
-	import { toast } from '@zerodevx/svelte-toast';
 
 	$: unauthenticatedOnlyGuard;
 
 	let username = '';
 	let password = '';
 
-	let usernameValid = true;
-	let passwordValid = true;
-
 	async function submit() {
-		usernameValid = !!username;
-		passwordValid = !!password;
-
-		if (!usernameValid || !passwordValid) return;
-
-		const res = await fetch('https://pollify.igorek.dev/account/register', {
+		const res = await fetch('https://pollify.igorek.dev/account/login', {
 			method: 'POST',
 			body: JSON.stringify({
 				username: username,
@@ -32,44 +24,42 @@
 		if (res.status == 200) {
 			const json = await res.json();
 			$token = json.token;
-		} else if (res.status == 400) {
-			toast.push('Пользователь с таким именем уже существует.');
+		} else if (res.status == 403) {
+			toast.push('Неверное имя пользователя или пароль.');
 		}
 	}
 </script>
 
 <div class="d-flex min-vh-100">
 	<div class="form-signin w-100 m-auto">
-		<h1 class="h3 mb-3 fw-normal">Регистрация</h1>
+		<h1 class="h3 mb-3 fw-normal">Авторизация</h1>
 
 		<form>
 			<div class="form-floating">
 				<input
 					type="text"
-					class={usernameValid ? 'form-control' : 'form-control is-invalid'}
+					class="form-control"
 					id="username"
 					placeholder="username"
 					bind:value={username}
 				/>
 				<label for="username">Имя пользователя</label>
-				<div class="invalid-feedback">Неправильный формат имени пользователя</div>
 			</div>
 			<div class="form-floating mt-2">
 				<input
 					type="password"
-					class={passwordValid ? 'form-control' : 'form-control is-invalid'}
+					class="form-control"
 					id="password"
 					placeholder="password"
 					bind:value={password}
 				/>
 				<label for="password">Пароль</label>
-				<div class="invalid-feedback">Неправильный формат пароля</div>
 			</div>
 			<button class="w-100 mt-3 btn btn-lg btn-primary" type="submit" on:click={submit}
-				>Зарегистрироваться</button
+				>Авторизоваться</button
 			>
 
-			<p class="mt-3">Уже есть аккаунт? <a href="/login">Авторизоваться</a></p>
+			<p class="mt-3">Нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
 		</form>
 	</div>
 </div>
