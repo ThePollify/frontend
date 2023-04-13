@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { toast } from '@zerodevx/svelte-toast';
+
 	let username = '';
 	let password = '';
 
@@ -24,7 +26,7 @@
 		});
 
 		const json = await res.json();
-		alert(JSON.stringify(json));
+		toast.push(JSON.stringify(json));
 	}
 </script>
 
