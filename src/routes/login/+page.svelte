@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { toast } from '@zerodevx/svelte-toast';
 	import { token } from '../../stores';
-	import unauthenticatedOnlyGuard from '../../guards.svelte';
+	import { goto } from '$app/navigation';
 
-	$: unauthenticatedOnlyGuard;
+	$: if ($token !== null) goto('/');
 
 	let username = '';
 	let password = '';
