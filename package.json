@@ -18,6 +18,8 @@
 		"@typescript-eslint/eslint-plugin": "^5.45.0",
 		"@typescript-eslint/parser": "^5.45.0",
 		"@zerodevx/svelte-toast": "^0.9.3",
+		"chart.js": "^4.2.1",
+		"chartjs-chart-wordcloud": "^4.1.1",
 		"eslint": "^8.28.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte3": "^4.0.0",
