@@ -65,6 +65,19 @@
 		}
 	}
 
+	async function deleteAccount(): Promise<void> {
+		const res = await fetch('https://pollify.igorek.dev/account/delete', {
+			method: 'DELETE',
+			headers: {
+				'X-Token': $token!
+			}
+		});
+
+		if (res.status == 200) {
+			$token = null;
+		}
+	}
+
 	function logout(): void {
 		$token = null;
 	}
@@ -126,5 +139,6 @@
 		</form>
 
 		<button class="mt-4 btn btn-danger" on:click={logout}>Выйти из аккаунта</button>
+		<button class="mt-4 btn btn-outline-danger" on:click={deleteAccount}>Удалить аккаунт</button>
 	</div>
 {/if}
