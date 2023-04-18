@@ -667,7 +667,7 @@
 		}
 	}
 
-	const plot_types = ['bar', 'pie', 'doughnut', 'bar', 'line', 'wordCloud'];
+	const plot_types = ['bar', 'pie', 'doughnut', 'bar', 'polarArea', 'wordCloud'];
 
 	for (const value of values) add2dataset(value, questions[value.question_id]);
 
