@@ -9,7 +9,7 @@
 	let password = '';
 
 	async function submit() {
-		const res = await fetch('https://pollify.igorek.dev/account/login', {
+		const res = await fetch('https://pollify.igorek.dev/api/v1/account/login', {
 			method: 'POST',
 			body: JSON.stringify({
 				username: username,

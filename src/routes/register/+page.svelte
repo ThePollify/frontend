@@ -17,7 +17,7 @@
 
 		if (!usernameValid || !passwordValid) return;
 
-		const res = await fetch('https://pollify.igorek.dev/account/register', {
+		const res = await fetch('https://pollify.igorek.dev/api/v1/account/register', {
 			method: 'POST',
 			body: JSON.stringify({
 				username: username,

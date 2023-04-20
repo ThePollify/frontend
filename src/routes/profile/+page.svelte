@@ -17,7 +17,7 @@
 
 		if (!usernameValid) return;
 
-		const res = await fetch('https://pollify.igorek.dev/account/update/username', {
+		const res = await fetch('https://pollify.igorek.dev/api/v1/account/update/username', {
 			method: 'PUT',
 			body: JSON.stringify({
 				username: username
@@ -45,7 +45,7 @@
 
 		if (!passwordValid) return;
 
-		const res = await fetch('https://pollify.igorek.dev/account/update/password', {
+		const res = await fetch('https://pollify.igorek.dev/api/v1/account/update/password', {
 			method: 'PUT',
 			body: JSON.stringify({
 				password: password
@@ -66,7 +66,7 @@
 	}
 
 	async function deleteAccount(): Promise<void> {
-		const res = await fetch('https://pollify.igorek.dev/account/delete', {
+		const res = await fetch('https://pollify.igorek.dev/api/v1/account/delete', {
 			method: 'DELETE',
 			headers: {
 				'X-Token': $token!
@@ -82,7 +82,7 @@
 		$token = null;
 	}
 
-	fetch('https://pollify.igorek.dev/account/me', {
+	fetch('https://pollify.igorek.dev/api/v1/account/me', {
 		method: 'GET',
 		headers: {
 			'X-Token': $token!
