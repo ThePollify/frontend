@@ -11,6 +11,7 @@
 
 	let data;
 	let slides;
+	let question_order = [];
 
 	let index = 0;
 
@@ -51,21 +52,45 @@
 				questions[plot.questions[i].question_id] = plot.questions[i];
 
 				let datasets = [];
+				let labels = [];
 				for (let j = 0; j < i + 1; j++) {
+					let z = 0;
+					for (let k = 0; k < j; k++) {
+						z += plot.questions[k].options.length;
+					}
+					for (const option of plot.questions[j].options) {
+						labels.push(option.label);
+					}
 					datasets.push({
 						label: plot.questions[j].label,
-						data: dataset[plot.questions[j].question_id] || []
+						data: new Array(z).fill(0).concat(dataset[plot.questions[j].question_id])
 					});
 				}
 				new_slides.push({
 					_plot_type: plot.plot_type,
 					_name: plot.name,
-					labels: plot.questions[plot.questions.length - 1].options.map((o) => o.label),
+					labels: labels,
 					datasets: datasets
 				});
 			}
 		}
 		slides = new_slides;
+	}
+
+	async function send_current_question() {
+		if (index === 0) return;
+
+		await fetch(
+			`https://pollify.igorek.dev/api/v1/answers/send/question` +
+				`?poll_id=${id}` +
+				`&question_id=${question_order[index - 1]}`,
+			{
+				method: 'POST',
+				headers: {
+					'X-Token': $token
+				}
+			}
+		);
 	}
 
 	onMount(async () => {
@@ -74,8 +99,10 @@
 		})
 			.then((d) => d.json())
 			.then((json) => (data = json));
+		for (const plot of data.poll.plots)
+			for (const question of plot.questions) question_order.push(question.question_id);
 
-		await fetch(`https://pollify.igorek.dev/api/v1/answers/get/my?poll_id=${id}`, {
+		await fetch(`https://pollify.igorek.dev/api/v1/answers/get/values?poll_id=${id}`, {
 			method: 'GET',
 			headers: {
 				'X-Token': $token
@@ -83,18 +110,24 @@
 		})
 			.then((d) => d.json())
 			.then((json) => {
-				for (const value of json.answer.values) {
+				for (const value of json) {
 					add2dataset(value, questions[value.question_id]);
 				}
 			});
 
-		// TODO
-		const ws = new ReconnectingWebSocket('wss://');
+		new ReconnectingWebSocket(
+			`wss://pollify.igorek.dev/api/v1/answers/listen/values?poll_id=${id}`
+		).addEventListener('message', (message) => {
+			let json = JSON.parse(message.data);
+			add2dataset(json, questions[json.question_id]);
+			parseSlides();
+		});
 
 		parseSlides();
 	});
 
 	$: if (data) parseSlides();
+	$: console.log('react');
 </script>
 
 <div class="vh-100 container-fluid">
@@ -116,13 +149,25 @@
 				<div class="flex-grow-1">
 					<div style="height: 100%">
 						{#if slides[index - 1]._plot_type == 1 || slides[index - 1]._plot_type == 4}
-							<Bar data={slides[index - 1]} options={{ maintainAspectRatio: false }} />
+							<Bar
+								data={slides[index - 1]}
+								options={{ maintainAspectRatio: false, animation: false }}
+							/>
 						{:else if slides[index - 1]._plot_type == 2}
-							<Pie data={slides[index - 1]} options={{ maintainAspectRatio: false }} />
+							<Pie
+								data={slides[index - 1]}
+								options={{ maintainAspectRatio: false, animation: false }}
+							/>
 						{:else if slides[index - 1]._plot_type == 3}
-							<Doughnut data={slides[index - 1]} options={{ maintainAspectRatio: false }} />
+							<Doughnut
+								data={slides[index - 1]}
+								options={{ maintainAspectRatio: false, animation: false }}
+							/>
 						{:else if slides[index - 1]._plot_type == 5}
-							<PolarArea data={slides[index - 1]} options={{ maintainAspectRatio: false }} />
+							<PolarArea
+								data={slides[index - 1]}
+								options={{ maintainAspectRatio: false, animation: false }}
+							/>
 						{/if}
 					</div>
 				</div>
@@ -133,14 +178,20 @@
 						type="button"
 						class="btn btn-outline-secondary"
 						disabled={index == 0}
-						on:click={() => (index -= 1)}>{'⮜'}</button
+						on:click={() => {
+							index -= 1;
+							send_current_question();
+						}}>{'⮜'}</button
 					>
 					<span class="my-auto mx-3">{`${index + 1}/${slides.length + 1}`}</span>
 					<button
 						type="button"
 						class="btn btn-outline-secondary"
 						disabled={index == slides.length}
-						on:click={() => (index += 1)}>{'⮞'}</button
+						on:click={() => {
+							index += 1;
+							send_current_question();
+						}}>{'⮞'}</button
 					>
 				</div>
 			</div>
