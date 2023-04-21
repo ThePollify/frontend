@@ -99,7 +99,7 @@
 
 <div class="vh-100 container-fluid">
 	{#if !data || !slides}
-		<div class="justify-content-center align-items-center my-auto">
+		<div class="vh-100 d-flex justify-content-center align-items-center my-auto">
 			<div class="spinner-border" role="status">
 				<span class="visually-hidden">Загрузка...</span>
 			</div>
