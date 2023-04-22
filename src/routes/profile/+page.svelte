@@ -8,8 +8,11 @@
 	let data: any | null = null;
 	let username = '';
 	let password = '';
+	let files: FileList | null = null;
+
 	let usernameValid = true;
 	let passwordValid = true;
+	let fileValid = true;
 
 	async function changeUsername(): Promise<void> {
 		if (!username) usernameValid = false;
@@ -65,6 +68,36 @@
 		}
 	}
 
+	async function changeImage(): Promise<void> {
+		if (!files) fileValid = false;
+		else fileValid = true;
+
+		if (!fileValid) return;
+
+		let body = new FormData();
+		body.append('file', files[0], files[0].name);
+
+		const res = await fetch('https://pollify.igorek.dev/api/v1/account/update/image', {
+			method: 'PUT',
+			body: body,
+			headers: {
+				'X-Token': $token!,
+				Accept: 'application/json'
+			}
+		});
+
+		console.log(await res.text());
+
+		if (res.status == 200) {
+			files = null;
+			toast.push('Фото профиля успешно изменено!');
+		}
+		if (res.status == 400) {
+			files = null;
+			fileValid = false;
+		}
+	}
+
 	async function deleteAccount(): Promise<void> {
 		const res = await fetch('https://pollify.igorek.dev/api/v1/account/delete', {
 			method: 'DELETE',
@@ -102,7 +135,12 @@
 	</div>
 {:else}
 	<div class="container mt-4">
-		<h2 class="mb-4">Настройка профиля {data.username}</h2>
+		<img
+			src="https://pollify.igorek.dev/api/v1/account/get/image?user_id={data.id}"
+			class="avatar rounded me-5"
+			alt="Avatar"
+		/>
+		<h2 class="mb-4 d-inline">Настройка профиля {data.username}</h2>
 
 		<hr />
 
@@ -138,7 +176,30 @@
 			>
 		</form>
 
+		<form class="mt-2 d-flex flex-sm-row flex-column">
+			<div class="mt-sm-2 mt-4">
+				<input
+					type="file"
+					class={fileValid ? 'form-control' : 'form-control is-invalid'}
+					id="file"
+					accept="image/png"
+					bind:files
+				/>
+				<div class="invalid-feedback">Неправильный формат изображения</div>
+			</div>
+			<button class="mt-2 ms-sm-2 btn btn-secondary" type="submit" on:click={changeImage}
+				>Изменить фото профиля</button
+			>
+		</form>
+
 		<button class="mt-4 btn btn-danger" on:click={logout}>Выйти из аккаунта</button>
 		<button class="mt-4 btn btn-outline-danger" on:click={deleteAccount}>Удалить аккаунт</button>
 	</div>
 {/if}
+
+<style>
+	.avatar {
+		width: 100px;
+		height: 100px;
+	}
+</style>
